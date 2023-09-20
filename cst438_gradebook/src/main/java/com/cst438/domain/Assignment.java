@@ -54,6 +54,21 @@ public class Assignment {
 	public void setCourse(Course course) {
 		this.course = course;
 	}
+
+	public Assignment() {
+		super();
+		this.course = null;
+		this.assignmentGrades = null;
+		this.name = "";
+		this.dueDate = null;
+	}
+	public Assignment(Course course, String name, Date dueDate) {
+		super();
+		this.course = course;
+
+		this.name = name;
+		this.dueDate = dueDate;
+	}
 	@Override
 	public String toString() {
 		return "Assignment [id=" + id + ", course_id=" + course.getCourse_id() + ", name=" + name + ", dueDate=" + dueDate
