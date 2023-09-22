@@ -70,6 +70,22 @@ public class Course {
 	public void setAssignments(List<Assignment> assignments) {
 		this.assignments = assignments;
 	}
+
+	public Course() {
+		super();
+		this.course_id = 0;
+		this.title = null;
+		this.instructor = null;
+		this.year = year;
+		this.semester = null;
+		this.enrollments = null;
+		this.assignments = null;
+	}
+	public Course(int course_id, String title) {
+		super();
+		this.course_id = course_id;
+		this.title = title;
+	}
 	@Override
 	public String toString() {
 		return "Course [course_id=" + course_id + ", title=" + title + ", instructor=" + instructor + ", year=" + year
