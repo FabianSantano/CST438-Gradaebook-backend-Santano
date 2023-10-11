@@ -54,20 +54,11 @@ public class Assignment {
 	public void setCourse(Course course) {
 		this.course = course;
 	}
-
-	public Assignment() {
-		super();
-		this.course = null;
-		this.assignmentGrades = null;
-		this.name = "";
-		this.dueDate = null;
+	public List<AssignmentGrade> getAssignmentGrades() {
+		return assignmentGrades;
 	}
-	public Assignment(Course course, String name, Date dueDate) {
-		super();
-		this.course = course;
-
-		this.name = name;
-		this.dueDate = dueDate;
+	public void setAssignmentGrades(List<AssignmentGrade> assignmentGrades) {
+		this.assignmentGrades = assignmentGrades;
 	}
 	@Override
 	public String toString() {
