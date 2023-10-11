@@ -6,6 +6,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,13 @@ public class RegistrationServiceMQ implements RegistrationService {
 	}
 
 
-	Queue registrationQueue = new Queue("registration-queue", true);
+    Queue registrationQueue = new Queue("registration-queue", true);
+
+
+    @Bean
+    Queue createQueue() {
+        return new Queue("gradebook-queue");
+    }
 
 	/*
 	 * Receive message for student added to course
@@ -45,6 +52,19 @@ public class RegistrationServiceMQ implements RegistrationService {
 	public void receive(String message) {
 		
 		System.out.println("Gradebook has received: "+message);
+		EnrollmentDTO enrollmentDTO =fromJsonString(
+				message,EnrollmentDTO.class);
+        Enrollment e = new Enrollment();
+        Course course = courseRepository.findById(enrollmentDTO.courseId()).orElse(null);
+
+        if (course != null && enrollmentDTO != null) {
+            e.setStudentEmail(enrollmentDTO.studentEmail());
+            e.setStudentName(enrollmentDTO.studentName());
+            e.setCourse(course);
+            enrollmentRepository.save(e);
+        }
+
+				
 
 		//TODO  deserialize message to EnrollmentDTO and update database
 	}
@@ -56,7 +76,9 @@ public class RegistrationServiceMQ implements RegistrationService {
 	public void sendFinalGrades(int course_id, FinalGradeDTO[] grades) {
 		 
 		System.out.println("Start sendFinalGrades "+course_id);
-
+		String data = asJsonString(grades);
+		rabbitTemplate.convertAndSend(registrationQueue.getName(), data);
+		System.out.println("Message sent");
 		//TODO convert grades to JSON string and send to registration service
 		
 	}
