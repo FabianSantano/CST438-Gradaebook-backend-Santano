@@ -31,36 +31,41 @@ public class RegistrationServiceREST implements RegistrationService {
 	public RegistrationServiceREST() {
 		System.out.println("REST registration service ");
 	}
-	
-	@Override
-	public void sendFinalGrades(int course_id , FinalGradeDTO[] grades) { 
-		
-		//TODO use restTemplate to send final grades to registration service
-		
-	}
-	
-	@Autowired
+
+    @Override
+    public void sendFinalGrades(int course_id, FinalGradeDTO[] grades) {
+        String url = registration_url + "/" + course_id;
+        // Use restTemplate.postForObject to send the data as a POST request
+        System.out.println("URL: " + url); // Add this line for debugging
+        restTemplate.put(url, grades);
+    }
+    
+    @Autowired
 	CourseRepository courseRepository;
 
 	@Autowired
 	EnrollmentRepository enrollmentRepository;
 
-	
-	/*
-	 * endpoint used by registration service to add an enrollment to an existing
-	 * course.
-	 */
-	@PostMapping("/enrollment")
-	@Transactional
-	public EnrollmentDTO addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO) {
-		
-		// Receive message from registration service to enroll a student into a course.
-		
-		System.out.println("GradeBook addEnrollment "+enrollmentDTO);
-		
-		//TODO remove following statement when complete.
-		return null;
-		
-	}
+    /*
+     * endpoint used by the registration service to add an enrollment to an existing
+     * course.
+     */
+    @PostMapping("/enrollment")
+    @Transactional
+    public EnrollmentDTO addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO) {
+        Enrollment enrollment = new Enrollment();
+        Course course = courseRepository.findById(enrollmentDTO.courseId()).orElse(null);
 
+        if (course != null && enrollmentDTO != null) {
+            enrollment.setStudentEmail(enrollmentDTO.studentEmail());
+            enrollment.setStudentName(enrollmentDTO.studentName());
+            enrollment.setCourse(course);
+            enrollmentRepository.save(enrollment);
+        }
+        
+        EnrollmentDTO newEnrollment = new EnrollmentDTO(0, enrollment.getStudentEmail(),
+        		enrollment.getStudentName(), enrollment.getCourse().getCourse_id());
+        
+        return newEnrollment;
+    }
 }
