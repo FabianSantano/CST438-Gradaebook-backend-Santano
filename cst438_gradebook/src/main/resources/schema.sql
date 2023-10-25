@@ -1,10 +1,20 @@
+CREATE TABLE user_table (
+  id INT AUTO_INCREMENT NOT NULL,
+  alias VARCHAR(255) DEFAULT NULL,
+  password VARCHAR(100),
+  role varchar(25),
+  PRIMARY KEY(id)
+);
+
+
 CREATE TABLE course (
   course_id int NOT NULL,
   instructor varchar(255) DEFAULT NULL,
   semester varchar(255) DEFAULT NULL,
   title varchar(255) DEFAULT NULL,
   year int NOT NULL,
-  PRIMARY KEY (course_id)
+  PRIMARY KEY (course_id),
+  FOREIGN KEY (instructor) REFERENCES user_table (alias) on delete cascade 
 );
 
 CREATE TABLE enrollment (
@@ -34,3 +44,6 @@ CREATE TABLE assignment_grade (
   FOREIGN KEY (enrollment_id) REFERENCES enrollment (id) on delete cascade,
   FOREIGN KEY (assignment_id) REFERENCES assignment (id) on delete cascade
 );
+
+
+
